@@ -72,7 +72,8 @@ export async function decrementCartItem(uid: string): Promise<void> {
   const existing = await db.products.get(uid);
   if (!existing) return;
   const min = existing.limitations?.minQuantity ?? 1;
-  if (existing.quantity <= min) {
+  // FM-BUG-07
+  if (existing.quantity <= min + 1) {
     await db.products.delete(uid);
     return;
   }
