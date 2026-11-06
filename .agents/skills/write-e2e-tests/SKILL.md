@@ -1,6 +1,6 @@
 ---
 name: write-e2e-tests
-description: Write Playwright end-to-end tests for the FoodMe storefront (apps/web/e2e) or admin back office (apps/admin/e2e). Use when asked to test a user flow in the browser such as browsing chefs, the cart, checkout, login, or admin order management, or to fix a flaky UI test.
+description: Write Playwright end-to-end tests for the FoodMe storefront (apps/web/e2e) or admin back office (apps/admin/e2e), including boundary-value cases. Use when asked to test a browser user flow (cart, checkout, login, admin), reproduce or guard a UI bug such as FM-BUG-07, or fix a flaky Playwright test.
 ---
 
 # write-e2e-tests
