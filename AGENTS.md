@@ -69,7 +69,7 @@ npm run dev | npm run build | npm run lint   # eslint
 npm run test:e2e   # Playwright; dev server on :5174 (--strictPort), runs serially
 ```
 
-The Playwright suites start the frontend dev server themselves, but they also call the backend directly at `http://localhost:8081` (override with `VITE_API_BASE_URL`; `layout.spec.ts` hardcodes it). Start the backend first. You can override the frontend URL with `PLAYWRIGHT_BASE_URL` (web) or `ADMIN_BASE_URL` (admin).
+The Playwright suites start the frontend dev server themselves, but they also call the backend directly at `http://localhost:8081` (override with `VITE_API_BASE_URL`). Start the backend first. You can override the frontend URL with `PLAYWRIGHT_BASE_URL` (web) or `ADMIN_BASE_URL` (admin).
 
 ## Observability
 

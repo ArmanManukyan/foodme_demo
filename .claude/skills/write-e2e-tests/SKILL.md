@@ -25,7 +25,7 @@ Both suites run in Chromium only, with an HTML reporter and `trace: "on-first-re
 
 Prerequisites (Playwright does **not** start these for you):
 1. `npm ci` in the app folder, then `npx playwright install chromium` the first time.
-2. The backend on `http://localhost:8081`: `./gradlew bootRun` in `apps/backend` with a local Postgres. Specs call it directly through `const API = process.env.VITE_API_BASE_URL || "http://localhost:8081";`. Copy that line. Don't hardcode the URL as `layout.spec.ts` does.
+2. The backend on `http://localhost:8081`: `./gradlew bootRun` in `apps/backend` with a local Postgres. Specs call it directly through `const API = process.env.VITE_API_BASE_URL || "http://localhost:8081";`. Copy that line. Don't hardcode the URL.
 
 The e2e backend uses the **Flyway seed** (`db/migration/V*.sql`), not the JUnit `src/test/resources/data.sql`. Never hardcode chef or dish ids. Look them up through the API.
 
