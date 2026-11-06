@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { createAccountAtCheckout } from "./auth";
 
-const API = "http://localhost:8081";
+const API = process.env.VITE_API_BASE_URL || "http://localhost:8081";
 
 test.describe("Layout Tests", () => {
   test("Home page structure and sections", async ({ page }) => {
