@@ -2,6 +2,8 @@
 
 Guidance for AI coding agents (Codex, Cursor, Claude Code, etc.) working in this repository.
 
+**Also read before changing code or tests:** `.claude/rules/testing.md` and `.claude/rules/code-style.md`. Claude Code loads them automatically; other agents should read them. For writing tests, use the skills `write-unit-tests`, `write-integration-tests` and `write-e2e-tests`. The full instructions are in `.claude/skills/<name>/SKILL.md`, and `.agents/skills/` holds discovery stubs that point there.
+
 ## What this repo is
 
 FoodMe is a food-ordering demo app used as teaching material for a QA course ("AI in QA"). It is deliberately imperfect: it contains **planted bugs and flaky tests**, tagged in code comments as `FM-BUG-NN` (product defects, mostly in `OrderService`, `ChefService`, order DTOs, admin `OrderShow.jsx`) and `FM-FLAKE-NN` (flaky backend/e2e tests). Fix commits reference the tag, e.g. `fix(web): ... (FM-BUG-07)`. Don't "clean up" a tagged spot unless the task is to fix that specific bug/flake.
