@@ -5,20 +5,7 @@ import { foodmeApi } from "@/api/foodme";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { formatAmd } from "@/lib/utils";
-
-const STATUS_LABEL: Record<string, string> = {
-  NEW: "Received",
-  ACCEPTED: "Preparing",
-  DELIVERED: "Delivered",
-  REJECTED: "Declined",
-};
-
-function statusClass(status: string) {
-  if (status === "DELIVERED") return "bg-emerald-50 text-emerald-800 ring-emerald-100";
-  if (status === "REJECTED") return "bg-red-50 text-red-700 ring-red-100";
-  if (status === "ACCEPTED") return "bg-amber-50 text-amber-800 ring-amber-100";
-  return "bg-zinc-100 text-zinc-700 ring-zinc-200/80";
-}
+import { statusBadgeClass, statusLabel } from "@/lib/order-status";
 
 function formatOrderDate(value: string) {
   const date = new Date(value);
@@ -103,8 +90,8 @@ export default function Orders() {
                       <p className="font-display text-lg font-bold text-zinc-900">
                         {order.number}
                       </p>
-                      <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1 ${statusClass(order.status)}`}>
-                        {STATUS_LABEL[order.status] ?? order.status}
+                      <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1 ${statusBadgeClass(order.status)}`}>
+                        {statusLabel(order.status)}
                       </span>
                     </div>
                     <p className="mt-1 truncate text-sm text-zinc-500">
