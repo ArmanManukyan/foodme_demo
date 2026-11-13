@@ -41,7 +41,19 @@ async function createOrderViaApi(request: import("@playwright/test").APIRequestC
     },
   });
   expect(createRes.ok()).toBeTruthy();
-  return createRes.json();
+  // The customer token is returned too, so tests can act as the customer (e.g. cancel).
+  return { ...(await createRes.json()), token: token as string };
+}
+
+async function cancelViaApi(
+  request: import("@playwright/test").APIRequestContext,
+  order: { number: string; token: string },
+) {
+  const res = await request.post(`${API}/api/customer/orders/${order.number}/cancel`, {
+    headers: { Authorization: `Bearer ${order.token}` },
+  });
+  expect(res.ok()).toBeTruthy();
+  expect((await res.json()).status).toBe("CANCELLED");
 }
 
 test.describe("Admin auth", () => {
@@ -87,6 +99,45 @@ test.describe("Admin resources", () => {
     await page.getByRole("button", { name: "Mark as ACCEPTED" }).click();
     await expect(page.getByText("Order status updated")).toBeVisible({ timeout: 10000 });
     await expect(page.getByText("ACCEPTED").first()).toBeVisible();
+  });
+
+  test("cancelled order shows CANCELLED and offers no status changes", async ({ page, request }) => {
+    const order = await createOrderViaApi(request);
+    await cancelViaApi(request, order);
+
+    await page.goto("/#/orders");
+    await page.getByRole("button", { name: "Refresh" }).click();
+    await page.getByText(order.number).click();
+    await expect(page).toHaveURL(/#\/orders\/\d+\/show/);
+    const heading = page.getByRole("heading", { name: `Order ${order.number}`, level: 5 });
+    await expect(heading).toBeVisible();
+
+    await expect(page.getByText("CANCELLED", { exact: true })).toBeVisible();
+    await expect(page.getByText("Change status")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /^Mark as / })).toHaveCount(0);
+  });
+
+  test("orders list filters by CANCELLED", async ({ page, request }) => {
+    const cancelled = await createOrderViaApi(request);
+    await cancelViaApi(request, cancelled);
+    const stillNew = await createOrderViaApi(request);
+
+    await page.goto("/#/orders");
+    await page.getByRole("combobox", { name: "Status" }).click();
+    await page.getByRole("option", { name: "CANCELLED", exact: true }).click();
+
+    await expect(page).toHaveURL(/CANCELLED/);
+    await expect(page.getByText(cancelled.number)).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText(stillNew.number)).toHaveCount(0);
+  });
+
+  test("dashboard lists CANCELLED under orders by status", async ({ page, request }) => {
+    const order = await createOrderViaApi(request);
+    await cancelViaApi(request, order);
+
+    await page.goto("/#/");
+    const byStatus = page.locator(".MuiCard-root").filter({ hasText: "Orders by status" });
+    await expect(byStatus.getByText("CANCELLED", { exact: true })).toBeVisible({ timeout: 15000 });
   });
 
   test("chefs list loads and opens edit", async ({ page }) => {

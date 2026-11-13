@@ -19,7 +19,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import RestaurantIcon from '@mui/icons-material/Restaurant';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
-import { OrderStatus, OrderStatusColors } from '../constants/OrderStatus.jsx';
+import { NON_REVENUE_STATUSES, OrderStatus, OrderStatusColors } from '../constants/OrderStatus.jsx';
 
 const currency = (value) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'AMD', maximumFractionDigits: 0 }).format(
@@ -73,7 +73,7 @@ const Dashboard = () => {
     });
 
     const recentRevenue = recentOrders
-        .filter((o) => o.status !== OrderStatus.REJECTED)
+        .filter((o) => !NON_REVENUE_STATUSES.includes(o.status))
         .reduce((sum, o) => sum + (o.totalPrice ?? 0), 0);
 
     const statusCounts = recentOrders.reduce((acc, o) => {

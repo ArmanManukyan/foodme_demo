@@ -15,6 +15,7 @@ import am.foodme.backend.model.Customer;
 import am.foodme.backend.model.Dish;
 import am.foodme.backend.model.Order;
 import am.foodme.backend.model.OrderDish;
+import am.foodme.backend.model.OrderStatus;
 import am.foodme.backend.repository.ChefRepository;
 import am.foodme.backend.repository.CustomerRepository;
 import am.foodme.backend.repository.DishRepository;
@@ -80,7 +81,7 @@ public class OrderService {
         Order order = new Order();
         order.setChef(chef);
         order.setCustomer(customer);
-        order.setStatus("NEW");
+        order.setStatus(OrderStatus.NEW);
         order.setReceiverName(orderDto.getReceiverName());
         order.setReceiverPhoneNumber(orderDto.getReceiverPhoneNumber());
         order.setReceiverEmail(orderDto.getReceiverEmail());
@@ -166,6 +167,31 @@ public class OrderService {
         Order order = orderRepository.findByNumber(number)
                 .orElseThrow(() -> new NotFoundException("Order " + number + " not found"));
         return OrderDto.mapEntityToDto(order);
+    }
+
+    /**
+     * Cancels the customer's own order while it is still NEW. Someone else's order
+     * and a missing order both give 404, so order numbers can't be probed.
+     */
+    @Transactional
+    public OrderDto cancelOrder(String number, String customerEmail) {
+        Customer customer = customerRepository.findByEmail(customerEmail == null ? "" : customerEmail.trim().toLowerCase())
+                .orElseThrow(() -> new NotFoundException("Customer not found"));
+        Order order = orderRepository.findByNumberAndCustomerId(number, customer.getId())
+                .orElseThrow(() -> new NotFoundException("Order " + number + " not found"));
+        if (!OrderStatus.NEW.equals(order.getStatus())) {
+            throw new BadRequestException("Only NEW orders can be cancelled (current status: " + order.getStatus() + ")");
+        }
+        // Conditional UPDATE: if the kitchen accepted the order in the meantime, nothing is changed.
+        int updated = orderRepository.updateStatusForCustomer(
+                number, customer.getId(), OrderStatus.NEW, OrderStatus.CANCELLED);
+        if (updated == 0) {
+            throw new BadRequestException("Order status has changed, it can no longer be cancelled");
+        }
+        meterRegistry.counter("foodme.orders.cancelled").increment();
+        Order cancelled = orderRepository.findByNumberAndCustomerId(number, customer.getId())
+                .orElseThrow(() -> new NotFoundException("Order " + number + " not found"));
+        return OrderDto.mapEntityToDto(cancelled);
     }
 
     @Transactional(readOnly = true)
