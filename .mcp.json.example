@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@playwright/mcp@0.0.84"]
+    },
+    "jira": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "agentsecrets", "env", "--", "uvx", "mcp-atlassian@0.24.6"]
+    },
+    "qase": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "agentsecrets", "env", "--", "cmd", "/c", "npx", "-y", "@qase/mcp-server@3.0.6"]
+    },
+    "agentsecrets": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "agentsecrets", "mcp", "serve"]
+    }
+  }
+}
