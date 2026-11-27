@@ -29,8 +29,10 @@ public class AdminChefService {
     }
 
     public Chef update(Long id, Chef chef) {
-        getById(id);
+        Chef existing = getById(id);
         chef.setId(id);
+        // The rating is the average of customer reviews (KAN-9), so admins can't overwrite it.
+        chef.setRating(existing.getRating());
         return chefRepository.save(chef);
     }
 }

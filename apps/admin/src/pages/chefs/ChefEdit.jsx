@@ -17,7 +17,8 @@ const ChefEdit = () => (
             <TextInput source="username" fullWidth />
             <TextInput source="phoneNumber" label="Phone" fullWidth />
             <SelectInput source="status" choices={statusChoices} fullWidth />
-            <NumberInput source="rating" min={0} max={5} step={0.1} />
+            {/* Average of customer reviews (KAN-9); the backend ignores edits. */}
+            <NumberInput source="rating" disabled helperText="Calculated from customer reviews" />
             <NumberInput source="deliveryPrice" label="Delivery price" />
             <NumberInput source="freeDeliveryFrom" label="Free delivery from" />
         </SimpleForm>

@@ -14,6 +14,7 @@ import type {
   OrderCreateResponseDto,
   OrderDto,
   OrderListResponseDto,
+  OrderReviewRequest,
 } from "@/types";
 
 export const foodmeApi = {
@@ -49,4 +50,7 @@ export const foodmeApi = {
 
   cancelMyOrder: (number: string) =>
     apiClient.post<FullOrderDto>(`/api/customer/orders/${encodeURIComponent(number)}/cancel`, {}),
+
+  reviewMyOrder: (number: string, payload: OrderReviewRequest) =>
+    apiClient.post<FullOrderDto>(`/api/customer/orders/${encodeURIComponent(number)}/review`, payload),
 };

@@ -19,10 +19,44 @@ import {
     DialogActions,
     TextField,
     Stack,
+    Rating,
 } from '@mui/material';
 import { OrderStatus, OrderStatusColors, OrderStatusTransitions } from '../../constants/OrderStatus.jsx';
 import { updateOrderStatus } from '../../api/order-api.js';
 import BackButton from '../../layout/BackButton.jsx';
+
+// KAN-9 R20–R22: shown for delivered orders only.
+const CustomerReview = ({ status, review }) => {
+    if (status !== OrderStatus.DELIVERED) return null;
+    return (
+        <>
+            <Divider sx={{ my: 2 }} />
+            <Box data-testid="customer-review">
+                <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+                    Customer review
+                </Typography>
+                {review ? (
+                    <>
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                            <Rating value={review.stars} readOnly aria-label={`${review.stars} out of 5 stars`} />
+                            <Typography variant="body2" color="text.secondary">
+                                {new Date(review.createdAt).toLocaleString()}
+                            </Typography>
+                        </Stack>
+                        {review.comment && (
+                            // Rendered as text, never as HTML: the comment is customer input.
+                            <Typography sx={{ mt: 1, whiteSpace: 'pre-line', overflowWrap: 'anywhere' }}>
+                                {review.comment}
+                            </Typography>
+                        )}
+                    </>
+                ) : (
+                    <Typography color="text.secondary">No review yet</Typography>
+                )}
+            </Box>
+        </>
+    );
+};
 
 const OrderDetails = () => {
     const record = useRecordContext();
@@ -163,6 +197,8 @@ const OrderDetails = () => {
                     <Typography variant="h6">Total</Typography>
                     <Typography variant="h6">{record.totalPrice} AMD</Typography>
                 </Stack>
+
+                <CustomerReview status={record.status} review={record.review} />
 
                 {availableTransitions.length > 0 && (
                     <>

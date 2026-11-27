@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, ChefHat, Package, Truck, X } from "lucide-react";
 import { foodmeApi } from "@/api/foodme";
 import { Button } from "@/components/ui/button";
+import { OrderReviewSummary } from "@/components/sections/order-review-summary";
 import {
   Dialog,
   DialogClose,
@@ -237,6 +238,12 @@ export default function Tracking() {
                 </div>
               )}
             </>
+          )}
+
+          {data.review && (
+            <div className="mt-6 border-t border-zinc-100 pt-5">
+              <OrderReviewSummary review={data.review} />
+            </div>
           )}
 
           {cancelMutation.isError && (

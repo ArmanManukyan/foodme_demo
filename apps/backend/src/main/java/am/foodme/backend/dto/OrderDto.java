@@ -33,6 +33,8 @@ public class OrderDto {
     private List<CreateOrderDishDto> createOrderDishes;
     private List<OrderDishDto> orderDishList;
     private LocalDateTime createdAt;
+    /** Response only: the customer's rating, null while the order has not been reviewed. */
+    private OrderReviewDto review;
 
     public static OrderDto mapEntityToDto(Order entity) {
         if (entity == null) {
@@ -61,6 +63,7 @@ public class OrderDto {
         }
         // FM-BUG-06
         dto.setCreatedAt(entity.getCreatedAt());
+        dto.setReview(OrderReviewDto.mapEntityToDto(entity.getReview()));
         return dto;
     }
 }
